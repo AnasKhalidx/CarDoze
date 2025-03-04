@@ -1,0 +1,46 @@
+﻿@model IEnumerable<CarDoze.Areas.Administrator.ViewModels.OrderViewModel>
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Areas/Administrator/Views/_Layout2.cshtml";
+
+}
+
+<h1>Orders</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Car Name</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Total Price</th>
+            <th>Payment Method</th>
+            <th>Shipping Address</th>
+            <th>Created By</th> 
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.Car.Name</td>
+                <td>@order.OrderDate</td>
+                <td>@order.Status</td>
+                <td>@order.Car.Price</td>
+                <td>@order.PaymentMethodID</td>
+                <td>
+                    @order.ShippingAddress?.AddressLine1<br />
+                    @order.ShippingAddress?.AddressLine2<br />
+                    @order.ShippingAddress?.City, @order.ShippingAddress?.State, @order.ShippingAddress?.Country<br />
+                    @order.ShippingAddress?.ZipCode
+                </td>
+                <td>@order.CreatedBy</td> 
+
+            </tr>
+        }
+    </tbody>
+</table>

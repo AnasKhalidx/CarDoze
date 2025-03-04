@@ -1,0 +1,89 @@
+﻿@model IEnumerable<CarDoze.Areas.Administrator.ViewModels.CarViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Administrator/Views/_Layout2.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Car Index</h2>
+        <a href="/Cars/Create" class="btn btn-primary">Create New</a>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="row no-gutters">
+                        <div class="col-auto">
+                            @if (item.ImageURLs != null && item.ImageURLs.Any())
+                            {
+                                <img src="@item.ImageURLs.FirstOrDefault()" class="img-fluid" alt="Car Image" style="width: 150px; height: auto;">
+                            }
+                            else
+                            {
+                                <img src="/images/placeholder.png" class="img-fluid" alt="Placeholder Image" style="width: 150px; height: auto;">
+                            }
+                        </div>
+                        <div class="col">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@item.Manufacturer.Name</h6>
+                                <p class="card-text">
+                                    <strong>Model:</strong> <span data-model-id="@item.ModelID" class="model-name">Loading...</span><br />
+                                    <strong>Year:</strong> @item.Year<br />
+                                    <strong>Price:</strong> @item.Price.ToString("C")<br />
+                                    <strong>Fuel Type:</strong> @item.FuelType<br />
+                                    <strong>Description:</strong> @item.Description<br />
+                                    <strong>Features:</strong>
+                                    @if (item.CarFeatures != null && item.CarFeatures.Any())
+                                    {
+                                        <ul class="list-unstyled mb-0">
+                                            @foreach (var feature in item.CarFeatures)
+                                            {
+                                                <li>@feature.FeatureName</li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <span>No Features Listed</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <div class="btn-group-vertical">
+                                <a href="/Cars/Edit/@item.CarID" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="/Cars/Delete/@item.CarID" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modelElements = document.querySelectorAll('.model-name');
+            modelElements.forEach(async function (el) {
+                const modelId = el.getAttribute('data-model-id');
+                if (modelId) {
+                    try {
+                        const response = await fetch(`/Cars/GetModelNameById/${modelId}`);
+                        const data = await response.json();
+                        el.textContent = data.modelName;
+                    } catch (error) {
+                        console.error('Error fetching model name:', error);
+                        el.textContent = 'Error loading model name';
+                    }
+                }
+            });
+        });
+    </script>
+}

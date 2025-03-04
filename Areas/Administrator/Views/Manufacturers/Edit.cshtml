@@ -1,0 +1,137 @@
+﻿@model CarDoze.Areas.Administrator.ViewModels.ManufacturerViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Administrator/Views/_Layout2.cshtml";
+}
+
+<h2>Edit</h2>
+
+<h4>Manufacturer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="ManufacturerID" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Logo" class="control-label"></label>
+                <input asp-for="Logo" class="form-control" />
+                <span asp-validation-for="Logo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="carModelsContainer">
+                <label for="CarModels">Car Models</label>
+                @if (Model.CarModels != null && Model.CarModels.Count > 0)
+                {
+                    for (var i = 0; i < Model.CarModels.Count; i++)
+                    {
+                        <div class="form-group" id="carModel-@i">
+                            <input type="hidden" name="CarModels[@i].ModelsID" value="@Model.CarModels[i].ModelsID" />
+                            <input type="hidden" name="CarModels[@i].ManufacturerID" value="@Model.CarModels[i].ManufacturerID" />
+                            <input type="hidden" name="CarModels[@i].IsDelete" value="false" />
+                            <input type="text" name="CarModels[@i].ModelName" class="form-control" value="@Model.CarModels[i].ModelName" />
+                            <span asp-validation-for="CarModels[@i].ModelName" class="text-danger"></span>
+                            <button type="button" class="btn btn-danger" onclick="markCarModelDeleted(@i)">Delete</button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="form-group">
+                        <input type="hidden" name="CarModels[0].ModelsID" value="0" />
+                        <input type="hidden" name="CarModels[0].IsDelete" value="false" />
+                        <input type="text" name="CarModels[0].ModelName" class="form-control" />
+                        <span asp-validation-for="CarModels[0].ModelName" class="text-danger"></span>
+                    </div>
+                }
+                <input type="hidden" id="carModelsIndex" value="@Model.CarModels?.Count ?? 1" />
+            </div>
+            <button type="button" class="btn btn-primary" id="addCarModelBtn">Add Car Model</button>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addCarModelBtn = document.getElementById("addCarModelBtn");
+            const carModelsContainer = document.getElementById("carModelsContainer");
+            let carModelIndex = parseInt(document.getElementById("carModelsIndex").value);
+
+            addCarModelBtn.addEventListener("click", function () {
+                const newInput = document.createElement("div");
+                newInput.classList.add("form-group");
+
+                const hiddenModelsID = document.createElement("input");
+                hiddenModelsID.type = "hidden";
+                hiddenModelsID.name = `CarModels[${carModelIndex}].ModelsID`;
+                hiddenModelsID.value = "0";
+
+                const hiddenManufacturerID = document.createElement("input");
+                hiddenManufacturerID.type = "hidden";
+                hiddenManufacturerID.name = `CarModels[${carModelIndex}].ManufacturerID`;
+                hiddenManufacturerID.value = "@Model.ManufacturerID";
+
+                const hiddenIsDelete = document.createElement("input");
+                hiddenIsDelete.type = "hidden";
+                hiddenIsDelete.name = `CarModels[${carModelIndex}].IsDelete`;
+                hiddenIsDelete.value = "false";
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.name = `CarModels[${carModelIndex}].ModelName`;
+                input.classList.add("form-control");
+
+                const span = document.createElement("span");
+                span.classList.add("text-danger");
+                span.textContent = "Enter car model name";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.classList.add("btn", "btn-danger");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function () {
+                    newInput.remove();
+                };
+
+                newInput.appendChild(hiddenModelsID);
+                newInput.appendChild(hiddenManufacturerID);
+                newInput.appendChild(hiddenIsDelete);
+                newInput.appendChild(input);
+                newInput.appendChild(span);
+                newInput.appendChild(deleteButton);
+                carModelsContainer.appendChild(newInput);
+
+                carModelIndex++;
+            });
+        });
+
+        function markCarModelDeleted(index) {
+            const carModelDiv = document.getElementById(`carModel-${index}`);
+            if (carModelDiv) {
+                carModelDiv.querySelector(`[name='CarModels[${index}].IsDelete']`).value = "true";
+                carModelDiv.style.display = "none";
+            }
+        }
+    </script>
+}

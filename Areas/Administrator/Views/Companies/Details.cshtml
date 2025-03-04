@@ -1,0 +1,50 @@
+﻿@model CarDoze.Areas.Administrator.ViewModels.CompanyViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/Administrator/Views/_Layout2.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Company</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Logo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Logo)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Partnerships.TypeShipp)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Partnerships.TypeShipp)
+        </dd>
+        
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.CompanyID" asp-area="Administrator" asp-controller="Companies">Edit</a> |
+    <a href="/Companies/Index">Back to List</a>
+</div>

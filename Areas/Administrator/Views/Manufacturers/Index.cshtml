@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CarDoze.Areas.Administrator.ViewModels.ManufacturerViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Administrator/Views/_Layout2.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Manufacturer Index</h2>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="row no-gutters">
+                        <div class="col-md-2">
+                            <img src="@item.Logo" class="img-fluid rounded-start" alt="Manufacturer Logo" style="width: 100%; height: auto;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text">
+                                    <strong>Description:</strong> <br />
+                                    <span>@item.Description</span><br />
+                                    <strong>Car Models:</strong>
+                                    <ul class="list-unstyled mb-0">
+                                        @if (item.CarModels != null && item.CarModels.Count > 0)
+                                        {
+                                            @foreach (var carModel in item.CarModels)
+                                            {
+                                                <li>@carModel.ModelName</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>No car models available</li>
+                                        }
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">
+                            <div class="btn-group-vertical w-100">
+                                <a href="/Manufacturers/Edit/@item.ManufacturerID" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="/Manufacturers/Delete/@item.ManufacturerID" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
