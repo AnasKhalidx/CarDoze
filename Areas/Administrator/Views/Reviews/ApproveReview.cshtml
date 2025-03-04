@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CarDoze.Areas.Administrator.ViewModels.ReviewViewModel>
+@{
+    ViewData["Title"] = "Review List";
+    Layout = "~/Areas/Administrator/Views/_Layout2.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-responsive table-striped">
+    <thead>
+        <tr>
+            <th>Review ID</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Submitted By</th>
+            <th>Submitted On</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var review in Model)
+        {
+            <tr>
+                <td>@review.ReviewID</td>
+                <td>@review.Rating</td>
+                <td>@review.Comment</td>
+                <td>@review.CreatedBy</td>
+                <td>@review.CreatedOn.ToString("yyyy-MM-dd")</td>
+                <td>@(review.IsActive ? "Active" : "Pending")</td>
+                <td>
+                    @if (!review.IsActive)
+                    {
+                        <form asp-action="ApproveReview" method="post">
+                            <input type="hidden" name="id" value="@review.ReviewID" />
+                            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to approve this review?');">Approve</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-success">Approved</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
