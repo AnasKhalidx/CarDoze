@@ -1,0 +1,80 @@
+﻿/* new-cars.css */
+
+.new-cars .section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+    .new-cars .section-header p {
+        font-size: 20px;
+        color: #777;
+    }
+
+    .new-cars .section-header h2 {
+        font-size: 36px;
+        color: #333;
+    }
+
+.new-cars-content {
+    position: relative;
+}
+
+.new-cars-carousel .item {
+    margin: 15px;
+}
+
+.single-new-cars-item {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+    .single-new-cars-item:hover {
+        transform: translateY(-5px);
+    }
+
+.new-cars-img {
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+    .new-cars-img img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s;
+    }
+
+        .new-cars-img img:hover {
+            transform: scale(1.1);
+        }
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.btn-primary {
+    background-color: #007BFF;
+    border-color: #007BFF;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
