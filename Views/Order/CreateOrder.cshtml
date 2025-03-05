@@ -1,0 +1,296 @@
+﻿@model CarDoze.Areas.Administrator.ViewModels.OrderViewModel
+@{
+
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(Model.Car?.Name ?? "Car") - Order</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/linearicons.css">
+    <link rel="stylesheet" href="~/assets/css/flaticon.css">
+    <link rel="stylesheet" href="~/assets/css/animate.css">
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/bootsnav.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="~/assets/css/responsive.css">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* Form Styles */
+        body {
+            background: linear-gradient(to bottom right, #f0f0f0, #ffffff);
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .form-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .car-name {
+            background-color: black;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .car-image {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        legend {
+            padding: 0 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+            input:focus, select:focus {
+                border-color: #007BFF;
+                outline: none;
+            }
+
+            input[type="submit"] {
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 15px 20px;
+                cursor: pointer;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+
+                input[type="submit"]:hover {
+                    background-color: green;
+                }
+
+        .total-price-field {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+            .total-price-field label {
+                margin-right: 10px;
+            }
+
+            .total-price-field input {
+                width: auto;
+                text-align: right;
+                border: none;
+                background: none;
+                font-weight: bold;
+            }
+
+        @@media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+
+            .car-name {
+                padding: 15px;
+                font-size: 1.25em;
+            }
+
+            input, select {
+                padding: 10px;
+            }
+
+                input[type="submit"] {
+                    padding: 12px 18px;
+                    font-size: 14px;
+                }
+
+            .box-container {
+                flex-direction: column;
+            }
+        }
+
+        .box-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .box {
+            flex: 1;
+        }
+        h2{
+            color:white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Main Content Section -->
+        <main role="main" class="form-container">
+            <form asp-action="CreateOrder" method="post">
+                <div class="car-name">
+                    <h2>@ViewData["ManufactureName"] @Model.Car.Name</h2>
+                </div>
+                <div class="new-cars-img">
+                    @if (@Model.Car.ImageURLs != null && @Model.Car.ImageURLs.Any())
+                    {
+                        <img src="@Model.Car.ImageURLs.FirstOrDefault()" class="card-img-top" alt="Image of @Model.Car.Name" />
+                    }
+                    else
+                    {
+                        <img src="/images/default-car.png" class="card-img-top" alt="No image available" />
+                    }
+                </div>
+                <input type="hidden" asp-for="CarID" />
+                <input type="hidden" asp-for="OrderDate" value="@DateTime.Now" />
+
+                <div class="box-container">
+                    <fieldset class="box">
+                        <legend>Contract Details</legend>
+                        <!-- Partnership 1 -->
+                        <label>Primary Partnership (Cost: 1000 JOD):</label>
+                        <select id="partnershipSelect1" asp-for="SelectedPartnershipID" asp-items="@(new SelectList(Model.Partnerships.Where(p => p.PartnershipID == 1), "PartnershipID", "TypeShipp"))" required>
+                            <option value="">-- Select Partnership --</option>
+                        </select>
+                        <label>Company for Primary Partnership:</label>
+                        <select id="companySelect1" asp-for="SelectedCompanyID" required>
+                            <option value="">-- Select Company --</option>
+                        </select>
+                        <!-- Partnership 2 -->
+                        <label>Secondary Partnership (Cost: 1000 JOD):</label>
+                        <select id="partnershipSelect2" asp-for="SelectedPartnership2ID" asp-items="@(new SelectList(Model.Partnerships.Where(p => p.PartnershipID == 2), "PartnershipID", "TypeShipp"))" required>
+                            <option value="">-- Select Partnership --</option>
+                        </select>
+                        <label>Company for Secondary Partnership:</label>
+                        <select id="companySelect2" asp-for="SelectedCompany2ID" required>
+                            <option value="">-- Select Company --</option>
+                        </select>
+                        <!-- Partnership 3 -->
+                        <label>Tertiary Partnership (Cost: 1000 JOD):</label>
+                        <select id="partnershipSelect3" asp-for="SelectedPartnership3ID" asp-items="@(new SelectList(Model.Partnerships.Where(p => p.PartnershipID == 3), "PartnershipID", "TypeShipp"))" required>
+                            <option value="">-- Select Partnership --</option>
+                        </select>
+                        <label>Company for Tertiary Partnership:</label>
+                        <select id="companySelect3" asp-for="SelectedCompany3ID" required>
+                            <option value="">-- Select Company --</option>
+                        </select>
+                    </fieldset>
+
+                    <fieldset class="box">
+                        <legend>Shipping Address</legend>
+                        <label>Address Line 1:</label>
+                        <input asp-for="ShippingAddress.AddressLine1" required />
+                        <label>Address Line 2:</label>
+                        <input asp-for="ShippingAddress.AddressLine2" />
+                        <label>City:</label>
+                        <input asp-for="ShippingAddress.City" required />
+                        <label>State:</label>
+                        <input asp-for="ShippingAddress.State" required />
+                        <label>Country:</label>
+                        <input asp-for="ShippingAddress.Country" required />
+                        <label>Zip Code:</label>
+                        <input asp-for="ShippingAddress.ZipCode" required />
+                    </fieldset>
+                </div>
+
+                <label>Payment Method:</label>
+                <select asp-for="PaymentMethod" asp-items="@(Html.GetEnumSelectList<PaymentMethod>())"></select>
+
+                <div class="total-price-field">
+                    <label>Total Price:</label>
+                    <input type="text" id="totalPrice" readonly /> JOD
+                </div>
+
+                <input type="submit" value="Place Order" class="btn btn-primary btn-lg" />
+            </form>
+        </main>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const carPrice = @Model.Car.Price;
+            const partnershipCost = 1000;
+
+            // Function to handle company selection based on partnership selection
+            function handlePartnershipChange(partnershipSelector, companySelector) {
+                $(partnershipSelector).change(function () {
+                    var selectedPartnershipId = $(this).val();
+                    var companyDropdown = $(companySelector);
+                    companyDropdown.empty(); // Clear existing options
+
+                    // Assuming you have an endpoint that returns companies for a given partnership
+                    $.getJSON(`/api/companies/${selectedPartnershipId}`, function (data) {
+                        $.each(data, function (key, entry) {
+                            companyDropdown.append($('<option>', {
+                                value: entry.companyID,
+                                text: entry.name
+                            }));
+                        });
+                    });
+
+                    calculateTotalPrice();
+                });
+            }
+
+            // Apply the function to all partnership/company pairs
+            handlePartnershipChange('#partnershipSelect1', '#companySelect1');
+            handlePartnershipChange('#partnershipSelect2', '#companySelect2');
+            handlePartnershipChange('#partnershipSelect3', '#companySelect3');
+
+            // Calculate and display total price
+            function calculateTotalPrice() {
+                let selectedPartnershipsCount = 0;
+                if ($('#partnershipSelect1').val()) selectedPartnershipsCount++;
+                if ($('#partnershipSelect2').val()) selectedPartnershipsCount++;
+                if ($('#partnershipSelect3').val()) selectedPartnershipsCount++;
+                const totalPrice = carPrice + selectedPartnershipsCount * partnershipCost;
+                $('#totalPrice').val(totalPrice.toLocaleString());
+            }
+
+            // Calculate total price on page load
+            calculateTotalPrice();
+        });
+    </script>
+</body>
+</html>

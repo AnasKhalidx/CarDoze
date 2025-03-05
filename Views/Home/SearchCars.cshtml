@@ -1,0 +1,252 @@
+﻿@model IEnumerable<CarDoze.Models.Car>
+
+@{
+    ViewData["Title"] = "SearchCars";
+    Layout = "";
+}
+@using Microsoft.AspNetCore.Identity
+@using CarDoze.Models
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var returnUrl = HttpContextAccessor.HttpContext.Request.Path.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SearchCars - CarDoze</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* Custom CSS for car display */
+        .car-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 1em;
+            margin-bottom: 2em;
+        }
+
+            .car-display img {
+                width: 50%;
+                border-radius: 1em;
+            }
+
+        .car-details {
+            width: 45%;
+        }
+
+        .car-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .car-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .car-price {
+            font-size: 1.5rem;
+            color: #ff0000;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #ff0000;
+            border-color: #ff0000;
+        }
+
+            .btn-primary:hover {
+                background-color: blue;
+                border-color: blue;
+            }
+
+        .container-fluid {
+            background: #ffffff;
+            color: black;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header styles */
+        .navbar {
+            background-color: #000000;
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            color: #ffffff !important;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+            font-size: 16px;
+            text-transform: uppercase;
+            padding: 15px 10px;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #ff0000 !important;
+            }
+
+        .navbar-nav .logout-link {
+            color: #ffffff !important;
+            background-color: #ff0000;
+            padding: 10px 20px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+            .navbar-nav .logout-link:hover {
+                background-color: #d00000;
+            }
+
+        /* Footer styles */
+        .footer {
+            background-color: #800000;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+            .footer a {
+                color: #fff;
+                text-decoration: none;
+            }
+
+                .footer a:hover {
+                    text-decoration: underline;
+                }
+
+            .footer .footer-social {
+                margin-top: 10px;
+            }
+
+                .footer .footer-social a {
+                    margin: 0 5px;
+                }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .navbar-collapse {
+            justify-content: flex-end;
+        }
+
+        .navbar-nav.ml-auto {
+            margin-right: 10px;
+        }
+
+        .logout-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            height: 100%; /* Make sure this is the same height as your navbar */
+            display: flex;
+            align-items: center; /* Align text vertically */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <b class="navbar-brand">CarDoze</b>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/">Home</a>
+                        </li>
+                        <div class="logout-container">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li>
+                                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("", new { area = "" })" method="post" id="logoutForm">
+                                            <button type="submit" id="Logout" class="btn btn-primary">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul class="btn btn-primary">
+                                    <li><a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@returnUrl">Login</a></li>
+                                </ul>
+                            }
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="container-fluid">
+        <main role="main" class="container mt-4 content">
+            <h2>SearchCars</h2>
+            <div class="container">
+                @foreach (var car in Model)
+                {
+                    <div class="car-display">
+
+                        @if (@car.ImageURLs != null && @car.ImageURLs.Any())
+                            {
+                            <img src="@car.ImageURLs.FirstOrDefault()" class="card-img-top" alt="Image of @car.Name" />
+                            }
+                            else
+                            {
+                                <img src="/images/default-car.png" class="card-img-top" alt="No image available" />
+                            }
+                       
+                        <div class="car-details">
+                            <div class="car-title"> @car.Manufacturer.Name  @car.Name </div>
+                            <div class="car-subtitle">The most rebellious member of the @car.FuelType family.</div>
+                            <div class="car-price">$@(car.Price != null ? car.Price.ToString("N0") : "N/A") Starting From</div>
+                            <a href="@Url.Action("Cars", "Home", new { id = car.CarID })" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>©2024 Applied Science Private University. All rights reserved.</p>
+        <div class="footer-social">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <!-- Include all js compiled plugins (below), or include individual files as needed -->
+    <script src="~/assets/js/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/bootsnav.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="~/assets/js/custom.js"></script>
+</body>
+</html>

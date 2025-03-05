@@ -1,0 +1,262 @@
+﻿@model CarDoze.Areas.Administrator.ViewModels.ReviewViewModel
+@{
+    Layout = "";
+    ViewData["Title"] = "Submit a Review";
+}
+@using Microsoft.AspNetCore.Identity
+@using CarDoze.Models
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var returnUrl = HttpContextAccessor.HttpContext.Request.Path.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit a Review - CarDoze</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-select, .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: red;
+            border-color: red;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+            .btn-primary:hover {
+                background-color: red;
+                border-color: red;
+            }
+
+        .invalid-feedback {
+            font-size: 14px;
+            color: #dc3545;
+        }
+
+        .rating {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+            .rating input {
+                display: none;
+            }
+
+            .rating label {
+                font-size: 30px;
+                color: #ccc;
+                cursor: pointer;
+            }
+
+                .rating label:before {
+                    content: '★';
+                }
+
+            .rating input:checked ~ label,
+            .rating input:checked ~ label ~ label {
+                color: #f5c518;
+            }
+
+            .rating input:focus:not(:checked) ~ label {
+                color: #f5c518;
+            }
+
+        /* Header styles */
+        .navbar {
+            background-color: #000000;
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            color: #ffffff !important;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+            font-size: 16px;
+            text-transform: uppercase;
+            padding: 15px 10px;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #ff0000 !important;
+            }
+
+        .navbar-nav .logout-link {
+            color: #ffffff !important;
+            background-color: #ff0000;
+            padding: 10px 20px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+            .navbar-nav .logout-link:hover {
+                background-color: #d00000;
+            }
+
+        /* Footer styles */
+        .footer {
+            background-color: #800000;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+            .footer a {
+                color: #fff;
+                text-decoration: none;
+            }
+
+                .footer a:hover {
+                    text-decoration: underline;
+                }
+
+            .footer .footer-social {
+                margin-top: 10px;
+            }
+
+                .footer .footer-social a {
+                    margin: 0 5px;
+                }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .navbar-collapse {
+            justify-content: flex-end;
+        }
+
+        .navbar-nav.ml-auto {
+            margin-right: 10px;
+        }
+
+        .logout-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            height: 100%; /* Make sure this is the same height as your navbar */
+            display: flex;
+            align-items: center; /* Align text vertically */
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="container">
+            <h2 class="mb-4">Submit Your Review</h2>
+            <form asp-action="GiveReview" method="post" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label for="Rating" class="form-label">Rating</label>
+                    <div class="rating">
+                        <input type="radio" id="star5" name="Rating" value="5" required />
+                        <label for="star5" title="5 stars">5 stars</label>
+                        <input type="radio" id="star4" name="Rating" value="4" required />
+                        <label for="star4" title="4 stars">4 stars</label>
+                        <input type="radio" id="star3" name="Rating" value="3" required />
+                        <label for="star3" title="3 stars">3 stars</label>
+                        <input type="radio" id="star2" name="Rating" value="2" required />
+                        <label for="star2" title="2 stars">2 stars</label>
+                        <input type="radio" id="star1" name="Rating" value="1" required />
+                        <label for="star1" title="1 star">1 star</label>
+                    </div>
+                    <div class="invalid-feedback">
+                        Please select a rating.
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="Comment" class="form-label">Comment</label>
+                    <textarea asp-for="Comment" class="form-control" rows="4" required placeholder="Enter your comments here..."></textarea>
+                    <div class="invalid-feedback">
+                        Please provide a comment.
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>©2024 Applied Science Private University. All rights reserved.</p>
+        <div class="footer-social">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    @section Scripts {
+        <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function () {
+                'use strict';
+                window.addEventListener('load', function () {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+    }
+</body>
+</html>

@@ -1,0 +1,773 @@
+﻿@model CarDoze.Areas.Administrator.ViewModels.HomePageViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<body>
+
+<section id="home" class="welcome-hero">
+    <div class="container">
+        <div class="welcome-hero-txt">
+            <h2>Get your desired car at a reasonable price</h2>
+                <button class="welcome-btn" onclick="window.location.href='#search-form'">Order Now</button>
+        </div>
+    </div>
+</section>
+
+
+    <div class="container">
+        <form action="@Url.Action("SearchCars", "Home")" method="get" class="model-search-content" id="search-form">
+            <div class="row">
+                <div class="col-md-offset-1 col-md-2 col-sm-12">
+                    <div class="single-model-search">
+                        <label>Make</label>
+                        <div class="model-select-icon">
+                            <select class="form-control" id="manufacturerId" name="manufacturerId">
+                                <option value="">Select Make</option>
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="single-model-search">
+                        <label for="modelID" class="control-label">Model</label>
+                        <div class="model-select-icon">
+                            <select class="form-control" id="modelID" name="modelID">
+                                <option value="">Select Model</option>
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-1 col-md-2 col-sm-12">
+                    <div class="single-model-search">
+                        <label>Year</label>
+                        <div class="model-select-icon">
+                            <input type="number" class="form-control" id="year" name="year" placeholder="Enter year" min="2020" max="@DateTime.Now.Year">
+                        </div>
+                    </div>
+                    <div class="single-model-search">
+                        <label>Fuel Type</label>
+                        <div class="model-select-icon">
+                            <div class="dropdown-multiselect">
+
+                                <button type="button" class="btn btn-default form-control">Select Fuel Types</button>
+                                <div class="multiselect-checkbox">
+                                    <label><input type="checkbox" value="Diesel"> Diesel</label>
+                                    <label><input type="checkbox" value="Hybrid"> Hybrid</label>
+                                    <label><input type="checkbox" value="Electric"> Electric</label>
+                                    <label><input type="checkbox" value="Petrol"> Petrol</label>
+                                    <label><input type="checkbox" value="Hydrogen"> Hydrogen</label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="fuelType" name="fuelType">
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-1 col-md-2 col-sm-12">
+                    <div class="single-model-search">
+                        <label>Min Price</label>
+                        <div class="model-select-icon">
+                            <input type="number" class="form-control" id="minPrice" name="minPrice" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    <div class="single-model-search">
+                        <label>Max Price</label>
+                        <div class="model-select-icon">
+                            <input type="number" class="form-control" id="maxPrice" name="maxPrice" placeholder="0" min="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <div class="single-model-search text-center">
+                        <button type="submit" class="welcome-btn model-search-btn">Search</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var selectedOptions = [];
+
+            $('.dropdown-multiselect button').click(function () {
+                $(this).toggleClass('active');
+                $(this).parent().toggleClass('open');
+            });
+
+            $('.multiselect-checkbox input[type="checkbox"]').change(function () {
+                var value = $(this).val();
+                if ($(this).is(':checked')) {
+                    selectedOptions.push(value);
+                } else {
+                    selectedOptions = selectedOptions.filter(function (item) {
+                        return item !== value;
+                    });
+                }
+                $('#fuelType').val(selectedOptions.join(','));
+            });
+
+            $(document).click(function (e) {
+                if (!$(e.target).closest('.dropdown-multiselect').length) {
+                    $('.dropdown-multiselect').removeClass('open');
+                    $('.dropdown-multiselect button').removeClass('active');
+                }
+            });
+
+            var url = '@Url.Action("GetManufacturers", "Home")';
+            console.log("Fetching manufacturers from:", url);
+
+            
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    console.log("Manufacturers loaded:", data);
+                    $('#manufacturerId').empty().append($('<option>', { value: '', text: 'Select Manufacturer' }));
+
+                    $.each(data, function (index, item) {
+                        $('#manufacturerId').append($('<option>', {
+                            value: item.manufacturerID,
+                            text: item.name
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to fetch manufacturers:", xhr.responseText);
+                }
+            });
+
+            
+            $('#search-form').on('submit', function (e) {
+                var year = parseInt($('#year').val());
+                var currentYear = new Date().getFullYear();
+
+                if (year > currentYear || year < currentYear - 3) {
+                    alert('Year must be between ' + (currentYear - 3) + ' and ' + currentYear);
+                    e.preventDefault();
+                }
+
+                var minPrice = parseInt($('#minPrice').val());
+                var maxPrice = parseInt($('#maxPrice').val());
+
+                if (minPrice < 0 || maxPrice < 0) {
+                    alert('Price cannot be negative');
+                    e.preventDefault();
+                }
+            });
+
+            
+            $('#manufacturerId').change(function () {
+                var manufacturerId = $(this).val();
+                $('#modelID').empty().append($('<option>', { value: '', text: 'Select Model' }));
+
+                if (manufacturerId) {
+                    $.ajax({
+                        url: '/Home/GetModelsByManufacturer/' + manufacturerId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            const uniqueModels = [...new Map(data.map(item => [item.modelName, item])).values()];
+                            $.each(uniqueModels, function (index, item) {
+                                $('#modelID').append($('<option>', {
+                                    value: item.modelsID,
+                                    text: item.modelName
+                                }));
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Failed to fetch models:", xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+<section id="service" class="service">
+    <div class="container">
+        <div class="service-content">
+            <div class="row">
+                <div class="col-md-4 col-sm-6">
+                    <div class="single-service-item">
+                        <div class="single-service-icon">
+                            <i class="flaticon-car"></i>
+                        </div>
+                        <h2>
+                            <a href="/Partnership/1">Shipping companies<span> </span></a>
+                        </h2>
+                        <p>
+                            CarDoze partners with the best shipping companies to deliver vehicles seamlessly from the factory directly to the customer, ensuring an efficient and hassle-free experience.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="single-service-item">
+                        <div class="single-service-icon">
+                            <i class="flaticon-car-repair"></i>
+                        </div>
+                        <h2>
+                            <a href="/Partnership/2">Maintenance companies</a>
+                        </h2>
+                        <p>
+                            CarDoze partners with top-notch maintenance services to ensure your vehicle receives premium after-sales care, maintaining peak performance and longevity.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="single-service-item">
+                        <div class="single-service-icon">
+                            <i class="flaticon-car-1"></i>
+                        </div>
+                        <h2>
+                            <a href="/Partnership/3">Customs clearance</a>
+                        </h2>
+                        <p>
+                            CarDoze partners with customs clearance experts, ensuring that your new car is delivered smoothly and efficiently to your doorstep without customer intervention.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+    </div>
+</section>
+
+    <section id="new-cars" class="new-cars">
+        <div class="container">
+            <div class="section-header">
+                <p>Checkout <span>the</span> latest cars</p>
+                <h2>Newest cars</h2>
+            </div>
+            <div class="new-cars-content">
+                <div class="owl-carousel owl-theme" id="new-cars-carousel">
+                    @if (Model.Cars != null && Model.Cars.Any())
+                    {
+                        foreach (var car in Model.Cars)
+                        {
+                            <div class="item">
+                                <div class="single-new-cars-item card h-100">
+                                    <div class="row no-gutters">
+                                        <div class="col-md-7 col-sm-12">
+                                            
+                                                @if (car.ImageURLs != null && car.ImageURLs.Any())
+                                                {
+                                                <img src="@car.ImageURLs.FirstOrDefault()" class="card-img-top" alt="Image of @car.Name"  />
+                                                }
+                                                else
+                                                {
+                                                <img src="/images/default-car.png" class="card-img-top" alt="No image available" />
+                                                }
+                                            
+                                        </div>
+                                        <div class="col-md-5 col-sm-12">
+                                            <div class="card-body">
+                                                <h5 class="card-title">@car.Name</h5>
+                                                <p class="card-text">@car.Description</p>
+                                                <p class="card-text">@car.Manufacturer.Name</p>
+                                                <p class="card-text">
+                                                    <strong>Models:</strong>
+                                                    <span data-model-id="@car.ModelID" class="model-name"></span>
+                                                </p>
+                                                <button class="btn btn-primary" onclick="window.location.href='/Home/Cars/@car.CarID'">View Details</button>
+                                                <button class="btn btn-secondary add-to-wishlist" data-car-id="@car.CarID">Add to Wishlist</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No Cars Found</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modelElements = document.querySelectorAll('.model-name');
+            modelElements.forEach(async function (el) {
+                const modelId = el.getAttribute('data-model-id');
+                if (modelId) {
+                    try {
+                        const response = await fetch(`/Home/GetModelNameById/${modelId}`);
+                        const data = await response.json();
+                        el.textContent = data.modelName;
+                    } catch (error) {
+                        console.error('Error fetching model name:', error);
+                        el.textContent = 'Error loading model name';
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            var url = '@Url.Action("GetLatestCars", "Home")';
+            console.log("Making AJAX request to:", url);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    console.log("Received data:", data);
+                    updateLatestCarsDisplay(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching latest cars:", xhr.status, xhr.responseText);
+                    $('#new-cars-carousel').html('<p>Error fetching data</p>');
+                }
+            });
+            $('.add-to-wishlist').click(function () {
+                var carId = $(this).data('car-id');
+                $.post('@Url.Action("AddToWishlist", "Wishlist")', { carId: carId }, function (result) {
+                    alert("Car added to wishlist!");
+                }).fail(function (xhr, status, error) {
+                    console.error("Error adding to wishlist:", xhr.status, xhr.responseText);
+                    alert("Failed to add car to wishlist.");
+                });
+            });
+        });
+            function updateLatestCarsDisplay(cars) {
+                var container = $('#new-cars-carousel');
+                container.empty();
+                if (!cars.length) {
+                    container.html('<p>No cars found.</p>');
+                    return;
+                }
+                cars.forEach(function (car) {
+                    var carHtml = `<div class="item">
+                            <div class="single-new-cars-item card h-100">
+                                <div class="row no-gutters">
+                                    <div class="col-md-7 col-sm-12">
+                                        <div class="new-cars-img">
+                                            ${car.imageURLs && car.imageURLs.length > 0 ? `<img src="${car.imageURLs[0]}" alt="Image of ${car.name}">` : `<img src="/images/default-car.png" alt="No image available">`}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-12">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${car.name}</h5>
+                                            <p class="card-text">${car.description}</p>
+                                            <button class="btn btn-primary" onclick="window.location.href='/Home/Cars/${car.carID}'">View Details</button>
+                                            <button class="btn btn-secondary add-to-wishlist" data-car-id="${car.carID}">Add to Wishlist</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    container.append(carHtml);
+                });
+
+                container.owlCarousel({
+                    items: 3,
+                    autoplay: true,
+                    loop: true,
+                    nav: true,
+                    dots: false,
+                    margin: 30,
+                    responsive: {
+                        0: {
+                            items: 1
+                        },
+                        600: {
+                            items: 2
+                        },
+                        1000: {
+                            items: 3
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+   @*  <script>
+        $(document).ready(function () {
+            $('.add-to-wishlist').click(function () {
+                var carId = $(this).data('car-id');
+                $.post('@Url.Action("AddToWishlist", "Wishlist")', { carId: carId }, function (result) {
+                    alert("Car added to wishlist!");
+                }).fail(function (xhr, status, error) {
+                    console.error("Error adding to wishlist:", xhr.status, xhr.responseText);
+                    alert("Failed to add car to wishlist.");
+                });
+            });
+        });
+    </script> *@
+
+    <!-- New-cars end -->
+    <!-- Featured-cars start -->
+    <section id="featured-cars" class="featured-cars">
+        <div class="container">
+            <div class="section-header">
+                <p>checkout <span>the</span> Best-selling cars</p>
+                <h2>Best-selling cars</h2>
+            </div>
+            <div class="featured-cars-content">
+                <div class="row" id="featured-cars-container">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            function fetchRandomCars() {
+                $.ajax({
+                    url: '@Url.Action("GetRandomCars", "Home")',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        updateFeaturedCarsDisplay(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching random cars:", xhr.status, xhr.responseText);
+                        $('#featured-cars-container').html('<p>Error fetching data</p>');
+                    }
+                });
+            }
+
+            function updateFeaturedCarsDisplay(cars) {
+                var container = $('#featured-cars-container');
+                container.empty();
+                if (!cars.length) {
+                    container.html('<p>No cars found.</p>');
+                    return;
+                }
+                cars.forEach(function (car) {
+                    var carHtml = `
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="single-featured-cars">
+                                    <div class="featured-img-box">
+                                        <div class="featured-cars-img">
+                                            ${car.imageURLs && car.imageURLs.length > 0 ? `<img src="${car.imageURLs[0]}" alt="Image of ${car.name}">` : `<img src="/images/default-car.png" alt="No image available">`}
+                                        </div>
+                                        <div class="featured-model-info">
+                                            <p>Year: ${car.year}</p>
+                                            <p><strong>Models:</strong> <span data-model-id="${car.modelID}" class="model-name"></span></p>
+                                            <h5>${car.price} JOD</h5>
+                                        </div>
+                                    </div>
+                                    <div class="featured-cars-txt">
+                                        <h2><a href="#">${car.name}</a></h2>
+                                        <div class="action-buttons">
+                                            <button class="wishlist-icon add-to-wishlist" data-car-id="${car.carID}">
+                                                <i class="fa fa-heart"></i>
+                                            </button>
+                                        </div>
+                                        <p>${car.description}</p>
+                                        <a href="/Home/Cars/${car.carID}" class="purchase-link">Purchase Now</a>
+                                    </div>
+                                </div>
+                            </div>`;
+                    container.append(carHtml);
+                });
+
+                $('.add-to-wishlist').click(function () {
+                    var carId = $(this).data('car-id');
+                    $.post('@Url.Action("AddToWishlist", "Wishlist")', { carId: carId }, function (result) {
+                        alert("Car added to wishlist!");
+                    }).fail(function (xhr, status, error) {
+                        console.error("Error adding to wishlist:", xhr.status, xhr.responseText);
+                        alert("Failed to add car to wishlist.");
+                    });
+                });
+
+                const modelElements = document.querySelectorAll('.model-name');
+                modelElements.forEach(async function (el) {
+                    const modelId = el.getAttribute('data-model-id');
+                    if (modelId) {
+                        try {
+                            const response = await fetch(`/Home/GetModelNameById/${modelId}`);
+                            const data = await response.json();
+                            el.textContent = data.modelName;
+                        } catch (error) {
+                            console.error('Error fetching model name:', error);
+                            el.textContent = 'Error loading model name';
+                        }
+                    }
+                });
+            }
+
+            fetchRandomCars();
+        });
+    </script>
+    <!-- Featured-cars end -->
+    <!--featured-cars end -->
+    <!-- clients-say strat -->
+<section id="reviews" class="reviews">
+    <div class="container">
+        <div class="section-header">
+            <p>Checkout <span>the</span> latest reviews</p>
+            <h2>Customer Reviews</h2>
+        </div>
+        <div class="reviews-content">
+            <div class="owl-carousel owl-theme" id="reviews-carousel">
+                @if (Model.Reviews != null && Model.Reviews.Any())
+                {
+                    foreach (var review in Model.Reviews)
+                    {
+                        <div class="item">
+                            <div class="single-review-item">
+                                <div class="review-txt">
+                                    <h3>@review.CreatedBy</h3>
+                                    <p>@review.Comment</p>
+                                    <p>Rating: @review.Rating / 5</p>
+                                    <p>Date: @review.CreatedOn</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No Reviews Found</p>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+        $('#reviews-carousel').owlCarousel({
+            items: 3,
+            autoplay: true,
+            loop: true,
+            nav: true,
+            dots: false,
+            margin: 30,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 3
+                }
+            }
+        });
+    });
+</script><!-- clients-say end -->
+<!--brand strat -->
+<section id="brand" class="brand">
+    <div class="container">
+        <div class="brand-area">
+            <div class="owl-carousel owl-theme brand-item">
+                <div class="item">
+                    <a href="#">
+                        <img src="~/assets/images/brand/br1.png" alt="brand-image" />
+                    </a>
+                </div><!--/.item-->
+                <div class="item">
+                    <a href="#">
+                        <img src="~/assets/images/brand/br2.png" alt="brand-image" />
+                    </a>
+                </div><!--/.item-->
+                <div class="item">
+                    <a href="#">
+                        <img src="~/assets/images/brand/br3.png" alt="brand-image" />
+                    </a>
+                </div><!--/.item-->
+                <div class="item">
+                    <a href="#">
+                        <img src="~/assets/images/brand/br4.png" alt="brand-image" />
+                    </a>
+                </div><!--/.item-->
+
+                <div class="item">
+                    <a href="#">
+                        <img src="~/assets/images/brand/br5.png" alt="brand-image" />
+                    </a>
+                </div><!--/.item-->
+
+                <div class="item">
+                    <a href="#">
+                        <img src="~/assets/images/brand/br6.png" alt="brand-image" />
+                    </a>
+                </div><!--/.item-->
+            </div><!--/.owl-carousel-->
+        </div><!--/.clients-area-->
+
+    </div><!--/.container-->
+
+</section><!--/brand-->
+<!--brand end -->
+<!--blog start -->
+<section id="blog" class="blog"></section><!--/.blog-->
+<!--blog end -->
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/owl.carousel/dist/owl.carousel.min.js"></script>
+</body>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .dropdown-multiselect {
+        position: relative;
+        width: 100%;
+    }
+
+        .dropdown-multiselect button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: white;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+            .dropdown-multiselect button:after {
+                content: "\25BC";
+                float: right;
+                margin-right: 10px;
+            }
+
+            .dropdown-multiselect button.active:after {
+                content: "\25B2";
+            }
+
+    .multiselect-checkbox {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ddd;
+        width: 100%;
+        z-index: 1;
+        max-height: 200px;
+        overflow-y: auto;
+        border-radius: 4px;
+    }
+
+        .multiselect-checkbox label {
+            display: block;
+            padding: 5px 10px;
+        }
+
+            .multiselect-checkbox label:hover {
+                background-color: #f1f1f1;
+            }
+
+    .dropdown-multiselect.open .multiselect-checkbox {
+        display: block;
+    }
+
+    .single-new-cars-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+
+    .new-cars-img img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .new-cars-txt {
+        padding-top: 10px;
+    }
+
+        .new-cars-txt h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .new-cars-txt p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+    .welcome-btn.new-cars-btn {
+        background-color: #007BFF;
+        border-color: #007BFF;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .welcome-btn.new-cars-btn:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+    .header-footer {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .new-cars-content .item .single-new-cars-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 1em;
+        margin-bottom: 2em;
+    }
+
+    .new-cars-content .item img {
+        width: 50%;
+        border-radius: 1em;
+    }
+
+    .new-cars-content .item .car-details {
+        width: 45%;
+        padding-left: 20px;
+    }
+
+    .new-cars-content .item .car-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .new-cars-content .item .car-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .new-cars-content .item .car-price {
+        font-size: 1.5rem;
+        color: #ff0000;
+        margin-bottom: 1rem;
+    }
+
+    .new-cars-content .item .btn-primary {
+        background-color: #ff0000;
+        border-color: #ff0000;
+    }
+
+        .new-cars-content .item .btn-primary:hover {
+            background-color: blue;
+            border-color: blue;
+        }
+
+
+
+</style>

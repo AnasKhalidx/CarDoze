@@ -1,0 +1,415 @@
+﻿<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <!-- meta data -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!--font-family-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
+
+    <!-- title of site -->
+    <title>CarDoze</title>
+
+    <!-- For favicon png -->
+    <link rel="shortcut icon" type="image/icon" href="~/assets/logo/favicon.png" />
+
+    <!--font-awesome.min.css-->
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+
+    <!--linear icon css-->
+    <link rel="stylesheet" href="~/assets/css/linearicons.css">
+
+    <!--flaticon.css-->
+    <link rel="stylesheet" href="~/assets/css/flaticon.css">
+
+    <!--animate.css-->
+    <link rel="stylesheet" href="~/assets/css/animate.css">
+
+    <!--owl.carousel.css-->
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css">
+
+    <!--bootstrap.min.css-->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+
+    <!-- bootsnav -->
+    <link rel="stylesheet" href="~/assets/css/bootsnav.css">
+
+    <!--style.css-->
+    <link rel="stylesheet" href="~/assets/css/style.css">
+
+    <!--responsive.css-->
+    <link rel="stylesheet" href="~/assets/css/responsive.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("Styles", required: false)
+
+</head>
+
+<body>
+     
+    <!--welcome-hero start -->
+    <header>
+        <div class="top-area">
+            <div class="header-area">
+                <nav class="navbar navbar-default bootsnav navbar-sticky navbar-scrollspy" data-minus-value-desktop="70" data-minus-value-mobile="55" data-speed="1000">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <a style="font-family:'Times New Roman', Times, serif" class="navbar-brand" href="~/">CarDoze<span></span></a>
+                        </div>
+                        <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+                            <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                                <li class="scroll active"><a href="#home">Home</a></li>
+                                <li class="scroll"><a href="#service">Partnerships</a></li>
+                                <li class="scroll"><a href="#new-cars">New Cars</a></li>
+                                <li class="scroll"><a href="#featured-cars">Best Selling Cars</a></li>
+                                <li class="scroll"><a href="#brand">Brands</a></li>
+                                <li>
+                                    <a asp-action="Index" asp-controller="Wishlist">ammar</a>
+                                </li>
+                                <li>
+                                    <a asp-action="Index" asp-controller="Wishlist">Wishlist</a>
+                                </li>
+                                <li><partial name="_LoginPartial" /></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    @RenderBody()
+
+    <!--contact start-->
+    <footer id="contact" class="contact">
+        <div class="container">
+            <div class="footer-top">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <div class="footer-logo">
+                                <a href="#home">CarDoze</a>
+                            </div>
+                            <p>
+                                CarDoze partners with the best shipping companies to deliver vehicles seamlessly from the factory directly to the customer, ensuring an efficient and hassle-free experience.
+                            </p>
+                          
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h2>Quick Links</h2>
+                            <ul>
+                                <li><a href="#home">Home</a></li>
+                                <li><a href="#service">Services</a></li>
+                                <li><a href="#new-cars">New Cars</a></li>
+                                <li><a href="#reviews">Reviews</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-xs-12">
+                        <div class="single-footer-widget">
+                            <h2>Top Brands</h2>
+                            <div class="row">
+                                <div class="col-md-6 col-xs-6">
+                                    <ul>
+                                        <li><a href="#manufacturerId">BMW</a></li>
+                                        <li><a href="#manufacturerId">KIA</a></li>
+                                        <li><a href="#manufacturerId">TESLA</a></li>
+                                        <li><a href="#manufacturerId">Audi</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <ul>
+                                        <li><a href="#manufacturerId">Ferrari</a></li>
+                                        <li><a href="#manufacturerId">Porsche</a></li>
+                                        <li><a href="#manufacturerId">Land Rover</a></li>
+                                        <li><a href="#manufacturerId">Aston Martin</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h2>Connect with Us</h2>
+                            <p>Stay connected with us through social media &#8595;&#8595;.</p>
+                            <div class="footer-contact">
+                                <p><a href="mailto:Car69Doze@gmail.com">Car69Doze@gmail.com</a></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p>©2024 Applied Science Private University. All rights reserved.</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="footer-social text-right">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/.footer-copyright-->
+        </div><!--/.container-->
+
+        <div id="scroll-Top">
+            <div class="return-to-top">
+                <i class="fa fa-angle-up" id="scroll-top" data-toggle="tooltip" data-placement="top" title="Back to Top" aria-hidden="true"></i>
+            </div>
+        </div><!--/.scroll-Top-->
+    </footer><!--/.contact-->
+    <!--contact end-->
+    <!-- Include all js compiled plugins (below), or include individual files as needed -->
+
+    <script src="~/assets/js/jquery.js"></script>
+
+    <!--modernizr.min.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+    <!--bootstrap.min.js-->
+    <script src="~/assets/js/bootstrap.min.js"></script>
+
+    <!-- bootsnav js -->
+    <script src="~/assets/js/bootsnav.js"></script>
+
+    <!--owl.carousel.js-->
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!--Custom JS-->
+    <script src="~/assets/js/custom.js"></script>
+
+</body>
+@RenderSection("Scripts", required: false)
+</html>
+
+<style>
+    /* Ensuring navigation items and logout button align properly */
+.navbar-header, .menu-ui-design, .logout-button {
+    display: flex;
+    align-items: center;
+}
+
+/* Styling for the navbar links */
+.navbar-nav > li > a {
+    color: #f5f7fa;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 15px 10px; /* Adjust the padding as needed */
+}
+
+/* Styling for the logout button */
+.logout-button {
+    display: flex;
+    align-items: center;
+}
+
+#Logout {
+    padding: 10px 20px;
+    background: #FF0000; /* Change to your desired color */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    margin-left: 15px; /* Space from the navbar */
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    font-family: 'Arial', sans-serif;
+}
+
+#Logout:hover {
+    background-color: #D00000; /* Darken color on hover */
+}
+
+/* Ensure navbar contents align properly */
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+    /* Style for the navbar brand link */
+    .navbar-brand {
+        font-size: 1.5em; /* Adjust the font size as needed */
+        color: #ffffff; /* Set the color of the brand text */
+        text-transform: uppercase; /* Make the text uppercase, if that's the desired style */
+    }
+
+    /* This will ensure your navigation is flex and items are spaced properly */
+    .navbar-collapse {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    /* Adjusting the navbar-nav to take the needed space and align properly */
+    .navbar-nav {
+        display: flex;
+        flex-grow: 1; /* This will make sure it takes the available space */
+        justify-content: space-around; /* This will space out your nav items */
+        align-items: center; /* Align the items vertically */
+    }
+
+   
+
+    /* If your Logout button is wrapped in a list-item similar to your other navigation links */
+    .nav-item {
+        display: flex;
+        align-items: center;
+    }
+
+    /* If the logout form should not distort the alignment */
+    #logoutForm {
+        margin-bottom: 0; /* Removes any default bottom margin */
+    }
+
+    /* Style for the navbar brand link */
+    .navbar-brand {
+        font-family: 'Aclonica'; /* Your preferred font family */
+        color: #ffffff; /* Set the color of the brand text */
+        font-size: 30px; /* Adjust the font size as needed */
+        text-transform: uppercase; /* Make the text uppercase, if that's the desired style */
+        padding: 0; /* Reset padding */
+        margin-left: -15px; /* Adjust this as needed to move the brand to the left */
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.8); /* Optional text shadow for styling */
+        pointer-events: none; /* Disables hover and click effects */
+        transition: none; /* Ensures there is no transition effect */
+    }
+
+    /* Ensure the navbar header is using flexbox to align items */
+    .navbar-header {
+        display: flex;
+        align-items: center; /* Align items vertically */
+        height: 100%; /* Set height to fill the parent container */
+        padding: 0; /* Reset padding */
+    }
+
+    /* Set the navbar container to also align items */
+    .navbar .container, .navbar .container-fluid {
+        display: flex;
+        align-items: center; /* Align items vertically */
+        justify-content: space-between; /* Justify content for space between logo and nav items */
+        padding: 0; /* Reset padding */
+    }
+
+    /* Reset the left margin for unordered list in the navbar */
+    .navbar-nav {
+        margin-left: 0;
+    }
+
+    /* If you have a specific height for your navbar, set the .navbar-brand accordingly */
+    .navbar-brand {
+        height: 100%; /* Make sure this is the same height as your navbar */
+        display: flex;
+        align-items: center; /* Align text vertically */
+    }
+
+    /* Footer styles */
+    .footer-top {
+        padding: 60px 0;
+        color: #fff;
+    }
+
+        .footer-top .single-footer-widget h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-top .single-footer-widget ul {
+            padding: 0;
+            list-style: none;
+        }
+
+            .footer-top .single-footer-widget ul li {
+                margin-bottom: 10px;
+            }
+
+                .footer-top .single-footer-widget ul li a {
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+                    .footer-top .single-footer-widget ul li a:hover {
+                        text-decoration: underline;
+                    }
+
+    .footer-contact p {
+        margin: 0em;
+    }
+   
+        .footer-contact p a {
+            color: #fff;
+            text-decoration: none;
+            margin:0em;
+        }
+
+            .footer-contact p a:hover {
+                text-decoration: underline;
+            }
+
+    .footer-newsletter p {
+        margin-bottom: 10px;
+    }
+
+    .hm-foot-email .form-control {
+        display: inline-block;
+        width: calc(100% - 50px);
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 0;
+    }
+
+    .hm-foot-email .foot-email-subscribe {
+        display: inline-block;
+        width: 50px;
+        background-color: #800000;
+        text-align: center;
+        color: #fff;
+        height: 42px;
+        line-height: 42px;
+    }
+
+    .footer-social a {
+        color: #fff;
+        margin-left: 10px;
+        font-size: 16px;
+    }
+
+        .footer-social a:hover {
+            color: #4e4ffa;
+        }
+
+    .footer-copyright {
+        padding: 20px 0;
+        background-color: #800000;
+        color: #fff;
+    }
+
+        .footer-copyright p {
+            margin: 0;
+        }
+        .navbar{
+        text-size-adjust:2em;
+    }
+</style>

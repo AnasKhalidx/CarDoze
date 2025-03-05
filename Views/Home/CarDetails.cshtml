@@ -1,0 +1,290 @@
+﻿@model CarDoze.Areas.Administrator.ViewModels.CarViewModel
+
+@{
+    Layout = "";
+}
+@using Microsoft.AspNetCore.Identity
+@using CarDoze.Models
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var returnUrl = HttpContextAccessor.HttpContext.Request.Path.ToString();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.Name - Car Details</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .card-img-top {
+            height: 300px;
+            object-fit: cover;
+            border-radius: 1em;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-header {
+            background-color: black;
+            color: white;
+            border-radius: 1em 1em 0 0;
+        }
+
+        .card-text {
+            margin-bottom: 0.75rem;
+            font-size: 1.35rem;
+        }
+
+        .btn-primary {
+            background-color: red;
+            border-color: red;
+        }
+
+        .btn-primary:hover {
+            background-color: darkred;
+            border-color: darkred;
+        }
+
+        .container-fluid {
+            background: #ffffff;
+            color: black;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        /* Header styles */
+        .navbar {
+            background-color: #000000;
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            color: #ffffff !important;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+            font-size: 16px;
+            text-transform: uppercase;
+            padding: 15px 10px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ff0000 !important;
+        }
+
+        .navbar-nav .logout-link {
+            color: #ffffff !important;
+            background-color: #ff0000;
+            padding: 10px 20px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .logout-link:hover {
+            background-color: #d00000;
+        }
+
+        /* Footer styles */
+        .footer {
+            background-color: #800000;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .footer-social {
+            margin-top: 10px;
+        }
+
+        .footer .footer-social a {
+            margin: 0 5px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .navbar-collapse {
+            justify-content: flex-end;
+        }
+
+        .navbar-nav.ml-auto {
+            margin-right: 10px;
+        }
+
+        .logout-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            height: 100%; 
+            display: flex;
+            align-items: center; 
+        }
+
+        /* Thumbnail styles */
+        .thumbnail {
+            max-width: 100px;
+            cursor: pointer;
+        }
+
+        .thumbnails {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <b class="navbar-brand">CarDoze</b>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/">Home</a>
+                        </li>
+                        <div class="logout-container">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li>
+                                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("", new { area = "" })" method="post" id="logoutForm">
+                                            <button type="submit" id="Logout" class="btn btn-primary">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul class="btn btn-primary">
+                                    <li><a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@returnUrl">Login</a></li>
+                                </ul>
+                            }
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <!-- Main Content Section -->
+        <main role="main" class="container mt-4 content">
+            <h2>Car Details</h2>
+            <div id="carCarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    @if (Model.ImageURLs != null && Model.ImageURLs.Any())
+                    {
+                        @for (int i = 0; i < Model.ImageURLs.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@Model.ImageURLs[i]" class="d-block w-100" alt="Image of @Model.Name">
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <img src="/images/default-car.png" class="d-block w-100" alt="No image available">
+                        </div>
+                    }
+                </div>
+                
+            </div>
+            <div class="thumbnails mt-3">
+                @if (Model.ImageURLs != null && Model.ImageURLs.Any())
+                {
+                    @for (int i = 0; i < Model.ImageURLs.Count; i++)
+                    {
+                        <img src="@Model.ImageURLs[i]" class="thumbnail" data-target="#carCarousel" data-slide-to="@i" alt="Thumbnail @i">
+                    }
+                }
+            </div>
+            <div class="car-details mt-3">
+                <div class="car-title"><b>@Model.Manufacturer.Name @Model.Name</b></div>
+                <hr />
+                <div class="car-subtitle">The most rebellious member of the @Model.FuelType family.</div>
+                <div class="car-price">@(Model.Price != null ? Model.Price.ToString("N0") : "N/A")JOD Starting From</div>
+                <div class="card-text"><strong>Year:</strong> @Model.Year</div>
+                <div class="card-text"><strong>Description:</strong> @Model.Description</div>
+                <div>
+                    @if (Model.CarFeatures != null && Model.CarFeatures.Any())
+                    {
+                        @foreach (var feature in Model.CarFeatures)
+                        {
+                            <span>@feature.FeatureName</span>
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <span>No Features Listed</span>
+                    }
+                </div>
+            </div>
+            <form asp-action="CreateOrder" asp-controller="Order" method="get" class="text-center mt-3">
+                <input type="hidden" asp-for="CarID" />
+                <button type="submit" class="btn btn-primary btn-lg">Order Now</button>
+            </form>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>©2024 Applied Science Private University. All rights reserved.</p>
+    </footer>
+
+    <!-- Include all js compiled plugins (below), or include individual files as needed -->
+    <script src="~/assets/js/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/bootsnav.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="~/assets/js/custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#carCarousel').carousel({
+                interval: 2000, 
+                ride: 'carousel'
+            });
+
+        
+            $('.thumbnail').click(function () {
+                var index = $(this).data('slide-to');
+                $('#carCarousel').carousel(index);
+            });
+        });
+    </script>
+</body>
+</html>
